@@ -48,14 +48,19 @@ artist_uri = get_artist_uri(all_artists) #Sets get artist id function to variabl
 #print(artist_uri) #Grabs Artist  URI
 
 
+all_artist_albums = []
+
 #Pull all of the artist's albums
-sp_albums = sp.artist_albums(artist_uri, album_type='album')
-#Creates empty list to hold song names and ID's
-test = []
-for i in range(len(sp_albums['items'])):
-    test.append((re.sub(r"[\(\[].*?[\)\]]", "", sp_albums['items'][i]['name']), sp_albums['items'][i]['id']))
-#pprint.pprint(album_names)
-#pprint.pprint(album_uris)
-print(test)
-#album_id = sp_albums['items'][i]['uri']
-#album_id = boot.split(':')[2]
+for artist in range(len(artist_uri)):
+    album_names_and_ids = []
+    sp_albums = sp.artist_albums(artist_uri[artist], album_type='album')
+    #print(sp_albums)
+    
+    # Information of each album - all albums
+    for i in range(len(sp_albums['items'])):
+        album_names_and_ids.append((sp_albums['items'][i]['name'], sp_albums['items'][i]['uri']))
+        album_names_and_ids = re.sub("[\(\[].*?[\)\]]", "", album_names_and_ids[i])
+    all_artist_albums.append(album_names_and_ids)
+        
+pprint.pprint(all_artist_albums)
+#pprint.pprint()
