@@ -1,0 +1,65 @@
+#Creates empty list to hold song names and ID's
+test = []
+for i in range(len(sp_albums['items'])):
+    test.append((re.sub(r"[\(\[].*?[\)\]]", "", sp_albums['items'][i]['name']), sp_albums['items'][i]['id']))
+#pprint.pprint(album_names)
+#pprint.pprint(album_uris)
+print(test)
+#album_id = sp_albums['items'][i]['uri']
+#album_id = boot.split(':')[2]
+
+________________________________
+tracks = []
+track_ids = []
+tracks = sp.album_tracks(album_id) #pull data on album tracks
+
+
+for x in range(len(tracks['items'])):
+   track_ids.append(tracks['items'][x]['name']) #The songs ids
+print(len(track_ids))
+
+________________________________
+[Algorithim to remove duplicates]
+
+new_list = []
+for items in albums:
+    booleon = 0
+    if not new_list:
+        new_list.append(items)
+    else:
+        for x in new_list:
+            if x[0] == items[0]:
+                booleon += 1
+        if booleon == 0:
+            new_list.append(items)
+
+pprint.pprint(new_list)
+_________________________________
+#Tracks from Album and ID's
+
+tracks = []
+track_ids = []
+tracks = sp.album_tracks(album_id) #pull data on album tracks
+
+
+for x in range(len(tracks['items'])):
+   track_ids.append(tracks['items'][x]['name']) #The songs ids
+print(len(track_ids))
+______
+#Grabs all of the artist's albums
+sp_albums = []
+for artist in artist_uri:
+    sp_albums.append([sp.artist_albums(artist, album_type='album')])
+pprint.pprint(sp_albums)
+___________________________________________________________________
+#Algorithim to remove duplicates in a list
+albums = []
+# using set
+visited = set()
+# Iteration
+for a, b in all_artist_albums:
+    if not a in visited:
+        visited.add(a)
+        albums.append((a, b))
+pprint.pprint(albums)
+______________________________________________________________________
