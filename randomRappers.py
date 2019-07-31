@@ -57,12 +57,8 @@ for artist in range(len(artist_uri)):
     for i in range(len(sp_albums['items'])):
         different_artist.append((re.sub(r" [\(\[].*?[\)\]]", "", sp_albums['items'][i]['name']), sp_albums['items'][i]['id']))
     all_artist_albums.append(different_artist)
-#pprint.pprint(different_artist)
-#pprint.pprint(all_artist_albums)
-
 
 filtered_albums = []
-
 #Algorithim to remove duplicates
 for person in all_artist_albums: #For each list in list of lists
     albums = []
@@ -74,4 +70,17 @@ for person in all_artist_albums: #For each list in list of lists
             visited.add(a)
             albums.append((a, b))
     filtered_albums.append(albums)
-#pprint.pprint(filtered_albums)
+
+#Get a list of album songs
+artist_song_holder = []
+
+for musician in filtered_albums:
+    each_artist = [] #List for each artist album
+    for album in musician:
+        album[1]#Album Ids
+        each_artist.append(album[1])
+    artist_song_holder.append(each_artist)
+
+pprint.pprint(artist_song_holder)
+
+
