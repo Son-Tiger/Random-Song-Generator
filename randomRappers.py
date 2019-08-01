@@ -86,13 +86,19 @@ def list_of_albums(filtered_albums):
     return artist_album_holder
 
 artist_album_holder = list_of_albums(filtered_albums)
-#pprint.pprint(artist_album_holder)
-'''
-for artist in artist_album_holder:
-    #pprint.pprint(artist) #each list of albums
+#pprint.pprint(artist_album_holder)\
+
+#print(track['items'][0])
+#print(track['items'][0]['id'])
+artist_tracks = []
+for artist in artist_album_holder: #List of list of albums
     tracks = []
     for albums in artist: #each album ID
-        tracks = sp.album_tracks(albums) #pull data on album tracks
-pprint.pprint(tracks)
-#print(artist_album_holder[0][1])
-'''
+        track = sp.album_tracks(albums) #pull data on album tracks
+        song_albums = []
+        for songs in track['items']: #songs from each album
+            #print(songs['id'])
+            song_albums.append(songs['id'])
+        tracks.append(song_albums)
+    artist_tracks.append(tracks)
+pprint.pprint(artist_tracks)
