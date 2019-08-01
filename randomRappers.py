@@ -3,6 +3,7 @@ import spotipy.util as util
 import pprint
 from spotipy.oauth2 import SpotifyClientCredentials
 import random
+from random import sample
 import re
 
 
@@ -86,9 +87,8 @@ def list_of_albums(filtered_albums):
     return artist_album_holder
 
 artist_album_holder = list_of_albums(filtered_albums)
-#pprint.pprint(artist_album_holder)\
 
-def get_list_of_songs(artist_album_holder):
+def get_list_of_songs(artist_album_holder): #list of albums songs from each artist
     artist_tracks = []
     for artist in artist_album_holder: #List of list of albums
         tracks = []
@@ -100,4 +100,18 @@ def get_list_of_songs(artist_album_holder):
     return artist_tracks
 artist_tracks = get_list_of_songs(artist_album_holder)
 
-pprint.pprint(artist_tracks)
+#pprint.pprint(artist_tracks)
+def playlist_album(): #function to get random songs
+    playlist = []
+    for artist in artist_tracks:
+        rand = sample(artist, 5)
+        playlist.append(rand)
+    #pprint.pprint(playlist)
+    flat_list = []
+    for sublist in playlist:
+        for item in sublist:
+            flat_list.append(item)
+    return flat_list
+random_playlist = playlist_album()
+
+pprint.pprint(random_playlist)
