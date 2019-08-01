@@ -18,15 +18,12 @@ def create_playlist(username, playlist_name):
     created_id = playlists['id']
     return created_id
 
-
 #Gets artists from  user input
-def get_artists():
-    number_artists = int(input('How many artists would you like to enter: '))
+def get_artists(number_artists):
     all_artists = []
     for artist in range(number_artists):
         all_artists.append(input('Enter artist name: '))
     return all_artists
-
 
 #Grabs artist uri from list of artists
 def get_artist_uri(all_artists):
@@ -35,7 +32,6 @@ def get_artist_uri(all_artists):
         results = sp.search(q='artist:'+ artist)
         artist_ids.append(results['tracks']['items'][0]['artists'][0]['uri'])
     return artist_ids
-
 
 #Grabs list of albums from uris
 def get_all_albums(artist_uri):
@@ -48,7 +44,6 @@ def get_all_albums(artist_uri):
             different_artist.append((re.sub(r" [\(\[].*?[\)\]]", "", sp_albums['items'][i]['name']), sp_albums['items'][i]['id']))
         all_artist_albums.append(different_artist)
     return all_artist_albums
-
 
 #Filters albums from list of all albums
 def get_filter_albums(all_artist_albums):
@@ -66,7 +61,6 @@ def get_filter_albums(all_artist_albums):
         filtered_albums.append(albums)
     return filtered_albums
 
-
 #Puts the filtered albums into updated list
 def list_of_albums(filtered_albums):
     #Get a list of album songs
@@ -78,7 +72,6 @@ def list_of_albums(filtered_albums):
             each_artist.append(album[1])
         artist_album_holder.append(each_artist)
     return artist_album_holder
-
 
 #Grabs a list of songs from updated list
 def get_list_of_songs(artist_album_holder): #list of albums songs from each artist
@@ -92,12 +85,11 @@ def get_list_of_songs(artist_album_holder): #list of albums songs from each arti
         artist_tracks.append(tracks) #adds album list to artist list
     return artist_tracks
 
-
 #Puts the list of songs into a playlist holder
-def playlist_album(artist_tracks): #function to get random songs
+def playlist_album(artist_tracks, random_amount): #function to get random songs
     playlist = []
     for artist in artist_tracks:
-        rand = sample(artist, 5)
+        rand = sample(artist, random_amount)
         playlist.append(rand)
     #pprint.pprint(playlist)
     flat_list = []
@@ -106,13 +98,12 @@ def playlist_album(artist_tracks): #function to get random songs
             flat_list.append(item)
     return flat_list
 
-
 #Feeds the playlist holder to function to create album
 def your_album(username, playlist_id, random_playlist):
     sp = spotipy.Spotify(auth=token)
     sp.trace = False
     results = sp.user_playlist_add_tracks(username, playlist_id, random_playlist)
-    print(results)
+    return results
 
 if __name__ == '__main__':
     # Spotify Token/Info Access
@@ -134,7 +125,9 @@ if __name__ == '__main__':
     playlist_id = create_playlist(username, playlist_name)
 
     #Gets artists from  user input
-    all_artists = get_artists()
+    number_artists = int(input('How many artists would you like to enter: '))
+    random_amount = int(input('How many songs from each artist would you like: '))
+    all_artists = get_artists(number_artists)
 
     #Grabs artist uri from list of artists
     artist_uri = get_artist_uri(all_artists)
@@ -152,8 +145,7 @@ if __name__ == '__main__':
     artist_tracks = get_list_of_songs(artist_album_holder)
 
     #Puts the list of songs into a playlist holder
-    random_playlist = playlist_album(artist_tracks)
+    random_playlist = playlist_album(artist_tracks, random_amount)
 
     #Feeds the playlist holder to function to create album
     your_album(username, playlist_id, random_playlist)
-
