@@ -6,23 +6,17 @@ import random
 from random import sample
 import re
 
-
-# Spotify Token/Info Access
-client_id = "9c815510a7a04bd69b5badfe865004f2"
-client_secret = "bc9da2b150a7461ba67b7990e0f59207"
-client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
-sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
-playlist_id: "0HdcafGAFDMbydy1LJPQWj"
-redirect_uri: "http://localhost:8888/callback"
-
-#username = input("What is your username?: ")
-username = 'twqfst'
-
-
-#Scope and Access Token
-scope = 'playlist-modify-public'
-token = util.prompt_for_user_token(username=username, scope='playlist-modify-public', client_id=client_id,
-client_secret=client_secret, redirect_uri='http://localhost:8888/callback')
+#function to create playlist for listening music
+def create_playlist(username, playlist_name):
+    if token:
+        sp = spotipy.Spotify(auth=token)
+        sp.trace = False
+        playlists = sp.user_playlist_create(username, playlist_name)
+        #pprint.pprint(playlists)
+    else:
+        print("Can't get token for", username)
+    created_id = playlists['id']
+    return created_id
 
 
 #Gets artists from  user input
@@ -33,6 +27,7 @@ def get_artists():
         all_artists.append(input('Enter artist name: '))
     return all_artists
 
+
 #Grabs artist uri from list of artists
 def get_artist_uri(all_artists):
     artist_ids = []
@@ -41,11 +36,9 @@ def get_artist_uri(all_artists):
         artist_ids.append(results['tracks']['items'][0]['artists'][0]['uri'])
     return artist_ids
 
-#Sets functions to variables
-all_artists = get_artists() #Sets get artist function to variable
-artist_uri = get_artist_uri(all_artists) #Sets get artist id function to variable
 
-def get_all_albums():
+#Grabs list of albums from uris
+def get_all_albums(artist_uri):
     all_artist_albums = [] #List of lists of all artist albums and ids
     #Pull all of the artist's albums
     for artist in range(len(artist_uri)):
@@ -56,8 +49,8 @@ def get_all_albums():
         all_artist_albums.append(different_artist)
     return all_artist_albums
 
-all_artist_albums = get_all_albums()
 
+#Filters albums from list of all albums
 def get_filter_albums(all_artist_albums):
     filtered_albums = []
     #Algorithim to remove duplicates
@@ -73,8 +66,8 @@ def get_filter_albums(all_artist_albums):
         filtered_albums.append(albums)
     return filtered_albums
 
-filtered_albums = get_filter_albums(all_artist_albums)
 
+#Puts the filtered albums into updated list
 def list_of_albums(filtered_albums):
     #Get a list of album songs
     artist_album_holder = []
@@ -86,8 +79,8 @@ def list_of_albums(filtered_albums):
         artist_album_holder.append(each_artist)
     return artist_album_holder
 
-artist_album_holder = list_of_albums(filtered_albums)
 
+#Grabs a list of songs from updated list
 def get_list_of_songs(artist_album_holder): #list of albums songs from each artist
     artist_tracks = []
     for artist in artist_album_holder: #List of list of albums
@@ -98,10 +91,10 @@ def get_list_of_songs(artist_album_holder): #list of albums songs from each arti
                 tracks.append(songs['id']) #add songs to song list
         artist_tracks.append(tracks) #adds album list to artist list
     return artist_tracks
-artist_tracks = get_list_of_songs(artist_album_holder)
 
-#pprint.pprint(artist_tracks)
-def playlist_album(): #function to get random songs
+
+#Puts the list of songs into a playlist holder
+def playlist_album(artist_tracks): #function to get random songs
     playlist = []
     for artist in artist_tracks:
         rand = sample(artist, 5)
@@ -112,6 +105,55 @@ def playlist_album(): #function to get random songs
         for item in sublist:
             flat_list.append(item)
     return flat_list
-random_playlist = playlist_album()
 
-pprint.pprint(random_playlist)
+
+#Feeds the playlist holder to function to create album
+def your_album(username, playlist_id, random_playlist):
+    sp = spotipy.Spotify(auth=token)
+    sp.trace = False
+    results = sp.user_playlist_add_tracks(username, playlist_id, random_playlist)
+    print(results)
+
+if __name__ == '__main__':
+    # Spotify Token/Info Access
+    client_id = "9c815510a7a04bd69b5badfe865004f2"
+    client_secret = "bc9da2b150a7461ba67b7990e0f59207"
+    client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
+    sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+    redirect_uri: "http://localhost:8888/callback"
+
+    username = input("What is your username?: ")
+    playlist_name = input("What would you like to name your playlist: ")
+
+    #Scope and Access Token
+    scope = 'playlist-modify-public'
+    token = util.prompt_for_user_token(username=username, scope='playlist-modify-public', client_id=client_id,
+    client_secret=client_secret, redirect_uri='http://localhost:8888/callback')
+
+    #function to create playlist for listening music
+    playlist_id = create_playlist(username, playlist_name)
+
+    #Gets artists from  user input
+    all_artists = get_artists()
+
+    #Grabs artist uri from list of artists
+    artist_uri = get_artist_uri(all_artists)
+
+    #Grabs list of albums from uris
+    all_artist_albums = get_all_albums(artist_uri)
+
+    #Filters albums from list of all albums
+    filtered_albums = get_filter_albums(all_artist_albums)
+
+    #Puts the filtered albums into updated list
+    artist_album_holder = list_of_albums(filtered_albums)
+
+    #Grabs a list of songs from updated list
+    artist_tracks = get_list_of_songs(artist_album_holder)
+
+    #Puts the list of songs into a playlist holder
+    random_playlist = playlist_album(artist_tracks)
+
+    #Feeds the playlist holder to function to create album
+    your_album(username, playlist_id, random_playlist)
+
