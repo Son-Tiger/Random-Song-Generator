@@ -107,8 +107,8 @@ def your_album(username, playlist_id, random_playlist):
 
 if __name__ == '__main__':
     # Spotify Token/Info Access
-    client_id = "9c815510a7a04bd69b5badfe865004f2"
-    client_secret = "bc9da2b150a7461ba67b7990e0f59207"
+    client_id = ""
+    client_secret = ""
     client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
     sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
     redirect_uri: "http://localhost:8888/callback"
