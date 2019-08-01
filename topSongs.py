@@ -41,4 +41,4 @@ if token:
 else:
     print("Can't get token for", username)
 
-print(song_ids)
+#tracks = sp.album_tracks(album) #pull data on album tracks

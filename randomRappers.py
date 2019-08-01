@@ -32,7 +32,6 @@ def get_artists():
         all_artists.append(input('Enter artist name: '))
     return all_artists
 
-
 #Grabs artist uri from list of artists
 def get_artist_uri(all_artists):
     artist_ids = []
@@ -41,46 +40,59 @@ def get_artist_uri(all_artists):
         artist_ids.append(results['tracks']['items'][0]['artists'][0]['uri'])
     return artist_ids
 
-
 #Sets functions to variables
 all_artists = get_artists() #Sets get artist function to variable
 artist_uri = get_artist_uri(all_artists) #Sets get artist id function to variable
-#print(artist_uri) #Grabs Artist  URI
 
+def get_all_albums():
+    all_artist_albums = [] #List of lists of all artist albums and ids
+    #Pull all of the artist's albums
+    for artist in range(len(artist_uri)):
+        different_artist = [] # List of each artist's albums and ids
+        sp_albums = sp.artist_albums(artist_uri[artist], album_type='album') #Artist Raw Information
+        for i in range(len(sp_albums['items'])):
+            different_artist.append((re.sub(r" [\(\[].*?[\)\]]", "", sp_albums['items'][i]['name']), sp_albums['items'][i]['id']))
+        all_artist_albums.append(different_artist)
+    return all_artist_albums
 
-all_artist_albums = [] #List of lists of all artist albums and ids
+all_artist_albums = get_all_albums()
 
-#Pull all of the artist's albums
-for artist in range(len(artist_uri)):
-    different_artist = [] # List of each artist's albums and ids
-    sp_albums = sp.artist_albums(artist_uri[artist], album_type='album') #Artist Raw Information
-    for i in range(len(sp_albums['items'])):
-        different_artist.append((re.sub(r" [\(\[].*?[\)\]]", "", sp_albums['items'][i]['name']), sp_albums['items'][i]['id']))
-    all_artist_albums.append(different_artist)
+def get_filter_albums(all_artist_albums):
+    filtered_albums = []
+    #Algorithim to remove duplicates
+    for person in all_artist_albums: #For each list in list of lists
+        albums = []
+        #Using set
+        visited = set()
+        # Iteration
+        for a, b in person:
+            if not a in visited:
+                visited.add(a)
+                albums.append((a, b))
+        filtered_albums.append(albums)
+    return filtered_albums
 
-filtered_albums = []
-#Algorithim to remove duplicates
-for person in all_artist_albums: #For each list in list of lists
-    albums = []
-    #Using set
-    visited = set()
-    # Iteration
-    for a, b in person:
-        if not a in visited:
-            visited.add(a)
-            albums.append((a, b))
-    filtered_albums.append(albums)
+filtered_albums = get_filter_albums(all_artist_albums)
 
-#Get a list of album songs
-artist_song_holder = []
+def list_of_albums(filtered_albums):
+    #Get a list of album songs
+    artist_album_holder = []
+    for musician in filtered_albums:
+        each_artist = [] #List for each artist album
+        for album in musician:
+            album[1]#Album Ids
+            each_artist.append(album[1])
+        artist_album_holder.append(each_artist)
+    return artist_album_holder
 
-for musician in filtered_albums:
-    each_artist = [] #List for each artist album
-    for album in musician:
-        album[1]#Album Ids
-        each_artist.append(album[1])
-    artist_song_holder.append(each_artist)
-
-pprint.pprint(artist_song_holder)
-
-
+artist_album_holder = list_of_albums(filtered_albums)
+#pprint.pprint(artist_album_holder)
+'''
+for artist in artist_album_holder:
+    #pprint.pprint(artist) #each list of albums
+    tracks = []
+    for albums in artist: #each album ID
+        tracks = sp.album_tracks(albums) #pull data on album tracks
+pprint.pprint(tracks)
+#print(artist_album_holder[0][1])
+'''
