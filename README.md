@@ -1,4 +1,4 @@
-.# Spotify <br>
+# Spotify <br>
 Spotify code for generating random songs based off favorite artist input
 
 ## Usage
