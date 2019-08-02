@@ -6,13 +6,13 @@ Spotify code for generating random songs based off favorite artist input
 Make pull request to copy code to be used.
 
 ### 2. Make/Login to Spotify Developer
-Grab Client ID and Client Secret for code. <br>
+Grab **Client ID** and **Client Secret** for code. <br>
 
 ### 3. Install Dependency <br>
 Install Spotipy (**pip install spotipy**). <br>
 
 ### 4. Run Program
-Run program in terminal by going to file in directory and type in python "filename". <br>
+Run program in terminal by going to file in directory and type in **python randomSongs**. <br>
  
  ## Current Issues
  ### Cache and Login <br>
